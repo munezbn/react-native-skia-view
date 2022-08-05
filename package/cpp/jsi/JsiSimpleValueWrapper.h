@@ -97,12 +97,12 @@ public:
     }
 
 private:
+    JsiWrapperValueType _type;
     jsi::PropNameID _propNameId;
     std::shared_ptr<jsi::Object> _valueHolder;
 
     bool _boolValue;
     double _numberValue;
 
-    JsiWrapperValueType _type;
 };
 }

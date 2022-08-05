@@ -37,10 +37,10 @@ using namespace std::chrono;
 
 RNSkDrawView::RNSkDrawView(std::shared_ptr<RNSkPlatformContext> context)
     : _jsiCanvas(std::make_shared<JsiSkCanvas>(context)),
-      _platformContext(std::move(context)),
-      _infoObject(std::make_shared<RNSkInfoObject>()),
       _jsDrawingLock(std::make_shared<std::timed_mutex>()),
       _gpuDrawingLock(std::make_shared<std::timed_mutex>()),
+      _platformContext(std::move(context)),
+      _infoObject(std::make_shared<RNSkInfoObject>()),
       _jsTimingInfo("SKIA/JS"),
       _gpuTimingInfo("SKIA/GPU")
       {}
