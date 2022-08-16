@@ -210,8 +210,13 @@ public:
       }
       return jsi::Object::createFromHostObject(
             runtime,
+#ifdef SKIAVIEW_PLATFORM_SKIA // FIXME Old Version doesnt support runtime shader, using Blur instead
+            std::make_shared<JsiSkImageFilter>(
+                getContext(), SkImageFilters::Blur(3, 3, nullptr, nullptr))
+#else
             std::make_shared<JsiSkImageFilter>(
                 getContext(), SkImageFilters::RuntimeShader(*rtb, childName, std::move(input)))
+#endif
       );
     }
 

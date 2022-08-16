@@ -48,7 +48,11 @@ namespace RNSkia
       auto matrix = count >= 2 && !arguments[1].isUndefined()  && !arguments[1].isNull()  ? JsiSkMatrix::fromValue(runtime, arguments[1]).get() : nullptr;
 
       // Create and return shader as host object
+#ifdef SKIAVIEW_PLATFORM_SKIA
+      auto shader = getObject()->makeShader(std::move(uniforms), nullptr, 0, matrix, false);
+#else
       auto shader = getObject()->makeShader(std::move(uniforms), nullptr, 0, matrix);
+#endif
 
       return jsi::Object::createFromHostObject(
           runtime, std::make_shared<JsiSkShader>(getContext(), std::move(shader)));
@@ -75,16 +79,24 @@ namespace RNSkia
       auto matrix = count >= 3 && !arguments[2].isUndefined()  && !arguments[2].isNull() ? JsiSkMatrix::fromValue(runtime, arguments[2]).get() : nullptr;
 
       // Create and return shader as host object
+#ifdef SKIAVIEW_PLATFORM_SKIA
+      auto shader = getObject()->makeShader(std::move(uniforms), children.data(),
+                                            children.size(), matrix, false);
+#else
       auto shader = getObject()->makeShader(std::move(uniforms), children.data(),
                                             children.size(), matrix);
-
+#endif
       return jsi::Object::createFromHostObject(
           runtime, std::make_shared<JsiSkShader>(getContext(), std::move(shader)));
     }
 
     JSI_HOST_FUNCTION(getUniformCount)
     {
+#ifdef SKIAVIEW_PLATFORM_SKIA
+      return static_cast<int>(getObject()->uniforms().count());
+#else
       return static_cast<int>(getObject()->uniforms().size());
+#endif
     }
 
     JSI_HOST_FUNCTION(getUniformFloatCount)
@@ -95,17 +107,29 @@ namespace RNSkia
     JSI_HOST_FUNCTION(getUniformName)
     {
       auto i = static_cast<int>(arguments[0].asNumber());
+#ifdef SKIAVIEW_PLATFORM_SKIA
+      if (i < 0 || i >= getObject()->uniforms().count()) {
+#else
       if (i < 0 || i >= getObject()->uniforms().size()) {
+#endif
         jsi::detail::throwJSError(runtime, "invalid uniform index");
       }
       auto it = getObject()->uniforms().begin() + i;
+#ifdef SKIAVIEW_PLATFORM_SKIA
       return jsi::String::createFromAscii(runtime, it->name.c_str());
+#else
+      return jsi::String::createFromAscii(runtime, it->fName.c_str());
+#endif
     }
 
     JSI_HOST_FUNCTION(getUniform)
     {
       auto i = static_cast<int>(arguments[0].asNumber());
+#ifdef SKIAVIEW_PLATFORM_SKIA
+      if (i < 0 || i >= getObject()->uniforms().count()) {
+#else
       if (i < 0 || i >= getObject()->uniforms().size()) {
+#endif
         jsi::detail::throwJSError(runtime, "invalid uniform index");
       }
       auto it = getObject()->uniforms().begin() + i;
@@ -151,7 +175,11 @@ namespace RNSkia
 
       // Convert to skia uniforms
       const auto& u = getObject()->uniforms();
+#ifdef SKIAVIEW_PLATFORM_SKIA
+      for (std::size_t i = 0; i < u.count(); i++)
+#else
       for (std::size_t i = 0; i < u.size(); i++)
+#endif
       {
         auto it = getObject()->uniforms().begin() + i;
         RuntimeEffectUniform reu = fromUniform(*it);

@@ -21,7 +21,11 @@
 #pragma clang diagnostic pop
 
 class SkPicture;
+#ifdef SKIAVIEW_PLATFORM_SKIA
+struct SkRect;
+#else
 class SkRect;
+#endif
 class SkImage;
 
 namespace RNSkia {
