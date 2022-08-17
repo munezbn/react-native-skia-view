@@ -1,0 +1,96 @@
+##############################################################
+
+import("//react-native/common.gni")
+
+config("LibRnSkia_config") {
+  cflags_cc = [ "-std=c++17","-g"]
+  cflags_cc += [
+    "-Wno-extra-semi",
+    "-Wno-sign-compare",
+    "-Wno-header-hygiene",
+  ]
+
+  include_dirs = [".",
+                  "../cpp/api/",
+                  "../cpp/jsi/",
+                  "../cpp/rnskia/",
+                  "../cpp/rnskia/values/",
+                  "../cpp/utils/",
+                  "//react-native/",
+                  "//react-native/ReactCommon/",
+                  "//react-native/ReactCommon/callinvoker/",
+                  "//react-native/ReactCommon/jsi/",
+                  "//react-native/ReactCommon/react/nativemodule/core/",
+                  "//react-native/ReactCommon/react/renderer/graphics/platform/cxx",
+                  "//react-native/ReactCommon/runtimeexecutor/",
+                  "//react-native/ReactCommon/yoga/",
+                  "//third_party/skia/",
+                  "//third_party/skia/include/core/",
+                  "//third_party/skia/include/effects",
+                  "//third_party/skia/include/utils/",
+                  "//third_party/skia/include/pathops/",
+                  "//rns_shell/",
+                  "//rns_shell/common/",
+                  "//rns_shell/platform/graphics/",
+                  "//ReactSkia/",
+                  ]
+  defines = ["SKIAVIEW_PLATFORM_SKIA"]
+}
+
+rn_cxx_component("Rnskia") {
+
+  # RNS Native module and its dependencies
+  sources = [
+    "RNSkiaModule.cpp",
+    "RNSkiaModule.h",
+    "PlatformContext.cpp",
+    "PlatformContext.h",
+    "SkiaManager.cpp",
+    "SkiaManager.h",
+  ]
+
+  # RNS Fabric Component and its dependencies
+  sources += [
+    "RNSkDrawViewImpl.cpp",
+    "RNSkDrawViewImpl.h",
+    "RSkComponentProviderSkiaDrawView.cpp",
+    "RSkComponentProviderSkiaDrawView.h",
+    "RSkComponentSkiaDrawView.cpp",
+    "RSkComponentSkiaDrawView.h",
+    "reactnativeskiaview/ReactNativeSkiaViewShadowNode.cpp",
+    "reactnativeskiaview/ReactNativeSkiaViewProps.cpp",
+  ]
+
+  # SkiaView sources
+  sources += [
+    "../cpp/rnskia/RNSkManager.cpp",
+    "../cpp/rnskia/RNSkManager.h",
+    "../cpp/rnskia/RNSkDispatchQueue.cpp",
+    "../cpp/rnskia/RNSkDispatchQueue.h",
+    "../cpp/rnskia/RNSkDrawView.cpp",
+    "../cpp/rnskia/RNSkDrawView.h",
+    "../cpp/jsi/JsiHostObject.cpp",
+    "../cpp/api/JsiSkDataFactory.h",
+    "../cpp/api/third_party/CSSColorParser.cpp",
+    "../cpp/api/third_party/CSSColorParser.h",
+  ]
+
+  defines = [
+    "SKIAVIEW_PLATFORM_SKIA",
+  ]
+
+  public_configs = [ ":LibRnSkia_config" ]
+  public_configs += [ "//build/secondary/folly:folly_config" ]
+  deps = [
+    "//folly",
+    "//folly:async",
+    "//folly:synchronization",
+    "//skia",
+    "//third_party/boost:headers_only",
+    "//third_party/double-conversion:double-conversion",
+    "//third_party/glog:glog",
+  ]
+
+  with_exceptions = true
+  with_rtti = true
+}
