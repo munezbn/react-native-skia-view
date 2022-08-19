@@ -26,8 +26,7 @@ class RSkComponentProviderSkiaDrawView : public RSkComponentProvider {
 #ifdef __cplusplus
 extern "C" {
 #endif
-RNS_USED
-static RSkComponentProvider *RSkComponentProviderSkiaDrawViewCls() {
+RNS_USED RSkComponentProvider *RSkComponentProviderSkiaDrawViewCls() {
   return new RSkComponentProviderSkiaDrawView();
 }
 
